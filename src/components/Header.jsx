@@ -24,7 +24,7 @@ const Header = () => {
   const userMenuRef = useRef(null);
   const categoryMenuRef = useRef(null);
 
-  // Close user menu when clicking outside
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
@@ -41,45 +41,45 @@ const Header = () => {
     };
   }, []);
 
-  // Toggle mobile menu
+
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
-  // Toggle user menu
+
   const toggleUserMenu = () => {
     setUserMenuOpen(!userMenuOpen);
   };
 
-  // Toggle category dropdown
+
   const toggleCategoryDropdown = () => {
     setCategoryDropdownOpen(!categoryDropdownOpen);
   };
 
-  // Handle search input change
+
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
 
-  // Handle search form submission
+
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     updateSearchQuery(searchTerm);
   };
 
-  // Handle category selection
+
   const handleCategorySelect = (category) => {
     updateCategory(category);
     setCategoryDropdownOpen(false);
   };
 
-  // Clear category filter
+
   const clearCategoryFilter = () => {
     updateCategory('');
     setCategoryDropdownOpen(false);
   };
 
-  // Handle sell button click
+
   const handleSellClick = () => {
     if (currentUser) {
       toggleSellModal();

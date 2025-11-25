@@ -49,22 +49,22 @@ export const addProduct = async (productData, image) => {
     if (!user) throw new Error('User not authenticated');
     if (!image) throw new Error('Image is required');
 
-    // Hardcode Cloudinary configuration
-    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME; // Your Cloudinary cloud name
-    const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET; // Your unsigned upload preset
+    
+    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+    const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET; 
     console.log('addProduct: Cloudinary Cloud Name:', cloudName);
     console.log('addProduct: Cloudinary Upload Preset:', uploadPreset);
 
-    // Validate image
+    
     const imageBlob = image instanceof Blob ? image : new Blob([image], { type: image.type });
     console.log('addProduct: Image size:', imageBlob.size, 'Type:', imageBlob.type);
 
-    // Check image type
+   
     if (!imageBlob.type.startsWith('image/')) {
       throw new Error('Unsupported file type. Please upload an image (e.g., JPEG, PNG).');
     }
 
-    // Check image size (5MB limit as per SellForm)
+    
     if (imageBlob.size > 5 * 1024 * 1024) {
       throw new Error('Image size exceeds 5MB limit.');
     }
@@ -74,7 +74,7 @@ export const addProduct = async (productData, image) => {
     formData.append('file', imageBlob);
     formData.append('upload_preset', uploadPreset);
 
-    // Increase timeout to 30 seconds
+
     const response = await timeoutPromise(
       fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
         method: 'POST',

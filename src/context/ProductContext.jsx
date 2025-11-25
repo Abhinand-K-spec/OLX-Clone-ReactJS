@@ -2,15 +2,15 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getProducts, getWishlist } from '../services/firebase';
 import { useAuth } from './AuthContext';
 
-// Create the product context
+
 const ProductContext = createContext();
 
-// Custom hook to use the product context
+
 export const useProducts = () => {
   return useContext(ProductContext);
 };
 
-// Product provider component
+
 export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [wishlist, setWishlist] = useState([]);
@@ -26,7 +26,7 @@ export const ProductProvider = ({ children }) => {
   
   const { currentUser } = useAuth();
 
-  // Fetch all products
+
   const fetchProducts = async () => {
     try {
       setLoading(true);
@@ -40,7 +40,7 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-  // Fetch user's wishlist
+
   const fetchWishlist = async () => {
     if (currentUser) {
       try {
@@ -54,7 +54,7 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-  // Filter products based on category and search query
+
   const filterProducts = (allProducts, category, query) => {
     let filtered = [...allProducts];
     
@@ -71,32 +71,32 @@ export const ProductProvider = ({ children }) => {
     setFilteredProducts(filtered);
   };
 
-  // Fetch products when component mounts or filters change
+
   useEffect(() => {
     fetchProducts();
   }, [selectedCategory, searchQuery]);
 
-  // Fetch wishlist when user changes
+
   useEffect(() => {
     fetchWishlist();
   }, [currentUser]);
 
-  // Toggle sell modal
+
   const toggleSellModal = () => {
     setSellModalOpen(prev => !prev);
   };
 
-  // Update search query
+
   const updateSearchQuery = (query) => {
     setSearchQuery(query);
   };
 
-  // Update category filter
+
   const updateCategory = (category) => {
     setSelectedCategory(category);
   };
 
-  // Refresh products (used after adding a new product)
+
   const refreshProducts = () => {
     fetchProducts();
     if (currentUser) {
@@ -104,7 +104,7 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-  // Value to be provided to consumers
+
   const value = {
     products: filteredProducts.length > 0 ? filteredProducts : products,
     wishlist,

@@ -22,7 +22,7 @@ const Footer = () => {
     <footer className="bg-olx-blue text-white py-8">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-
+        
           <div>
             <h3 className="text-lg font-bold mb-4">POPULAR CATEGORIES</h3>
             <ul className="space-y-2">
