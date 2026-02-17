@@ -1,4 +1,4 @@
-# 🛒 OLX Clone - Shamveel P
+# 🛒 OLX Clone - Abhinand K
 
 An OLX-like online marketplace built using **ReactJS**, **Firebase**, and **Cloudinary**. Users can post, browse, and manage listings of products with real-time updates, authentication, and image uploads.
 
