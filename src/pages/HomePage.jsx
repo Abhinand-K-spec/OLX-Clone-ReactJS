@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import ProductCard from '../components/ProductCard';
 import { useProducts } from '../context/ProductContext';
-import { Search, Filter, ChevronDown } from 'lucide-react';
+import { Search, Filter, ChevronDown, X } from 'lucide-react';
 
 const HomePage = () => {
-  const { 
-    products, 
-    loading, 
-    categories, 
-    selectedCategory, 
-    updateCategory 
+  const {
+    products,
+    loading,
+    error,
+    categories,
+    selectedCategory,
+    updateCategory
   } = useProducts();
   const [displayCount, setDisplayCount] = useState(8);
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
@@ -69,7 +70,7 @@ const HomePage = () => {
               </div>
               <ChevronDown className="h-4 w-4" />
             </button>
-            
+
             {isCategoryDropdownOpen && (
               <div className="absolute z-10 mt-1 w-full bg-white rounded-md shadow-lg animate-fadeIn">
                 <div className="py-1">
@@ -99,11 +100,10 @@ const HomePage = () => {
           <div className="flex items-center space-x-2 overflow-x-auto pb-2">
             <button
               onClick={clearCategoryFilter}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                !selectedCategory
-                  ? 'bg-olx-blue text-white'
-                  : 'bg-white text-olx-blue hover:bg-gray-100'
-              }`}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${!selectedCategory
+                ? 'bg-olx-blue text-white'
+                : 'bg-white text-olx-blue hover:bg-gray-100'
+                }`}
             >
               All Categories
             </button>
@@ -111,11 +111,10 @@ const HomePage = () => {
               <button
                 key={category}
                 onClick={() => handleCategorySelect(category)}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                  selectedCategory === category
-                    ? 'bg-olx-blue text-white'
-                    : 'bg-white text-olx-blue hover:bg-gray-100'
-                }`}
+                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${selectedCategory === category
+                  ? 'bg-olx-blue text-white'
+                  : 'bg-white text-olx-blue hover:bg-gray-100'
+                  }`}
               >
                 {category}
               </button>
@@ -128,9 +127,9 @@ const HomePage = () => {
           <h2 className="text-2xl font-bold text-olx-blue mb-4">
             {selectedCategory ? `${selectedCategory} Items` : 'Fresh Recommendations'}
           </h2>
-          
+
           {loading ? (
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {[...Array(4)].map((_, index) => (
                 <div key={index} className="bg-white rounded-lg shadow-card overflow-hidden animate-pulse">
@@ -144,8 +143,22 @@ const HomePage = () => {
                 </div>
               ))}
             </div>
+          ) : error ? (
+            <div className="bg-white rounded-lg shadow-card p-8 text-center">
+              <div className="inline-flex items-center justify-center h-12 w-12 rounded-full bg-red-100 text-red-600 mb-4">
+                <X className="h-6 w-6" />
+              </div>
+              <h3 className="text-xl font-bold text-olx-blue mb-2">Oops! Something went wrong</h3>
+              <p className="text-olx-dark-grey mb-6">{error}</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-4 py-2 bg-olx-blue text-white rounded-md hover:bg-olx-blue/90 transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
           ) : products.length === 0 ? (
-            
+
             <div className="bg-white rounded-lg shadow-card p-8 text-center">
               <Search className="h-12 w-12 text-olx-dark-grey mx-auto mb-4" />
               <h3 className="text-xl font-bold text-olx-blue mb-2">No items found</h3>

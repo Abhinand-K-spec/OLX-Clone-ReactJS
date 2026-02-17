@@ -16,25 +16,28 @@ export const ProductProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [categories, setCategories] = useState([
-    'Electronics', 'Vehicles', 'Property', 'Furniture', 
+    'Electronics', 'Vehicles', 'Property', 'Furniture',
     'Fashion', 'Books & Hobbies', 'Pets', 'Services'
   ]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [sellModalOpen, setSellModalOpen] = useState(false);
-  
+
   const { currentUser } = useAuth();
 
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
+      setError(null);
       const productData = await getProducts(selectedCategory, searchQuery);
       setProducts(productData);
       filterProducts(productData, selectedCategory, searchQuery);
     } catch (error) {
       console.error('Error fetching products:', error);
+      setError(error.message || 'Failed to fetch products. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -57,17 +60,17 @@ export const ProductProvider = ({ children }) => {
 
   const filterProducts = (allProducts, category, query) => {
     let filtered = [...allProducts];
-    
+
     if (category) {
       filtered = filtered.filter(product => product.category === category);
     }
-    
+
     if (query) {
-      filtered = filtered.filter(product => 
+      filtered = filtered.filter(product =>
         product.name.toLowerCase().includes(query.toLowerCase())
       );
     }
-    
+
     setFilteredProducts(filtered);
   };
 
@@ -112,6 +115,7 @@ export const ProductProvider = ({ children }) => {
     selectedCategory,
     searchQuery,
     loading,
+    error,
     sellModalOpen,
     toggleSellModal,
     updateSearchQuery,

@@ -1,5 +1,13 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  GoogleAuthProvider,
+  signInWithPopup
+} from 'firebase/auth';
 import { getFirestore, collection, addDoc, getDocs, getDoc, doc, query, where, updateDoc, arrayUnion, arrayRemove, serverTimestamp, orderBy } from 'firebase/firestore';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -13,14 +21,34 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+export const isConfigValid = Object.values(firebaseConfig).every(
+  (value) => value && value !== 'placeholder_key' && !String(value).includes('placeholder')
+);
+
+if (!isConfigValid) {
+  console.warn('Firebase configuration is using placeholder values. Authentication and data fetching will likely fail.');
+}
+
+
+
+let app, auth, db, googleProvider;
+
+try {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
+  googleProvider = new GoogleAuthProvider();
+  googleProvider.setCustomParameters({ prompt: 'select_account' });
+} catch (error) {
+  console.error('Firebase initialization error:', error);
+}
+
+
 
 const timeoutPromise = (promise, time, errorMessage) => {
   return Promise.race([
     promise,
-    new Promise((_, reject) => 
+    new Promise((_, reject) =>
       setTimeout(() => reject(new Error(errorMessage)), time)
     ),
   ]);
@@ -32,6 +60,13 @@ export const registerUser = (email, password) => {
 
 export const loginUser = (email, password) => {
   return signInWithEmailAndPassword(auth, email, password);
+};
+
+export const signInWithGoogle = () => {
+  if (!isConfigValid) {
+    throw new Error('CONFIG_ERROR');
+  }
+  return signInWithPopup(auth, googleProvider);
 };
 
 export const logoutUser = () => {
@@ -49,22 +84,22 @@ export const addProduct = async (productData, image) => {
     if (!user) throw new Error('User not authenticated');
     if (!image) throw new Error('Image is required');
 
-    
+
     const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET; 
+    const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
     console.log('addProduct: Cloudinary Cloud Name:', cloudName);
     console.log('addProduct: Cloudinary Upload Preset:', uploadPreset);
 
-    
+
     const imageBlob = image instanceof Blob ? image : new Blob([image], { type: image.type });
     console.log('addProduct: Image size:', imageBlob.size, 'Type:', imageBlob.type);
 
-   
+
     if (!imageBlob.type.startsWith('image/')) {
       throw new Error('Unsupported file type. Please upload an image (e.g., JPEG, PNG).');
     }
 
-    
+
     if (imageBlob.size > 5 * 1024 * 1024) {
       throw new Error('Image size exceeds 5MB limit.');
     }
@@ -119,46 +154,49 @@ export const getProducts = async (categoryFilter, searchQuery) => {
   try {
     let productsQuery = collection(db, 'products');
     let querySnapshot;
-    
-    if (categoryFilter && searchQuery) {
-      querySnapshot = await getDocs(
-        query(
+
+    const fetchDocs = async () => {
+      if (categoryFilter && searchQuery) {
+        const q = query(
           productsQuery,
           where('category', '==', categoryFilter),
           orderBy('createdAt', 'desc')
-        )
-      );
-      const filteredProducts = querySnapshot.docs.filter(doc => 
-        doc.data().name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      return filteredProducts.map(doc => ({ id: doc.id, ...doc.data() }));
-    } else if (categoryFilter) {
-      querySnapshot = await getDocs(
-        query(
+        );
+        return await getDocs(q);
+      } else if (categoryFilter) {
+        const q = query(
           productsQuery,
           where('category', '==', categoryFilter),
           orderBy('createdAt', 'desc')
-        )
-      );
-    } else if (searchQuery) {
-      querySnapshot = await getDocs(
-        query(
+        );
+        return await getDocs(q);
+      } else if (searchQuery) {
+        const q = query(
           productsQuery,
           orderBy('name'),
           orderBy('createdAt', 'desc')
-        )
-      );
-      const filteredProducts = querySnapshot.docs.filter(doc => 
+        );
+        return await getDocs(q);
+      } else {
+        const q = query(
+          productsQuery,
+          orderBy('createdAt', 'desc')
+        );
+        return await getDocs(q);
+      }
+    };
+
+    querySnapshot = await timeoutPromise(
+      fetchDocs(),
+      10000,
+      'Fetching products timed out. Please check your connection or Firebase configuration.'
+    );
+
+    if (searchQuery) {
+      const filteredProducts = querySnapshot.docs.filter(doc =>
         doc.data().name.toLowerCase().includes(searchQuery.toLowerCase())
       );
       return filteredProducts.map(doc => ({ id: doc.id, ...doc.data() }));
-    } else {
-      querySnapshot = await getDocs(
-        query(
-          productsQuery,
-          orderBy('createdAt', 'desc')
-        )
-      );
     }
 
     return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -170,11 +208,15 @@ export const getProducts = async (categoryFilter, searchQuery) => {
 
 export const getProductById = async (productId) => {
   try {
-    console.log('getProductById: Fetching product with ID:', productId); // Add logging for debugging
-    const productDoc = await getDoc(doc(db, 'products', productId));
-    
+    console.log('getProductById: Fetching product with ID:', productId);
+    const productDoc = await timeoutPromise(
+      getDoc(doc(db, 'products', productId)),
+      10000,
+      'Fetching product details timed out.'
+    );
+
     if (productDoc.exists()) {
-      return { id: productDoc.id, ...productDoc.data() }; // Fix: Use productDoc.data()
+      return { id: productDoc.id, ...productDoc.data() };
     } else {
       throw new Error('Product not found');
     }
@@ -257,7 +299,7 @@ export const getWishlist = async () => {
 
     const wishlistDoc = wishlistSnapshot.docs[0];
     const wishlistData = wishlistDoc.data();
-    
+
     if (!wishlistData.products || wishlistData.products.length === 0) {
       return [];
     }
@@ -292,7 +334,7 @@ export const checkIfInWishlist = async (productId) => {
 
     const wishlistDoc = wishlistSnapshot.docs[0];
     const wishlistData = wishlistDoc.data();
-    
+
     return wishlistData.products && wishlistData.products.includes(productId);
   } catch (error) {
     console.error('Error checking wishlist: ', error);

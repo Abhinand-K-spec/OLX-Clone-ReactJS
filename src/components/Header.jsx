@@ -2,25 +2,25 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useProducts } from '../context/ProductContext';
-import { Search, Heart, ChevronDown, Menu, X, LogOut, User } from 'lucide-react';
+import { Search, Heart, ChevronDown, Menu, X, LogOut, User, MapPin } from 'lucide-react';
 import { FaPlus } from "react-icons/fa";
 
 const Header = () => {
   const { currentUser, openAuthModal } = useAuth();
-  const { 
-    categories, 
-    selectedCategory, 
-    updateCategory, 
-    updateSearchQuery, 
+  const {
+    categories,
+    selectedCategory,
+    updateCategory,
+    updateSearchQuery,
     toggleSellModal,
     searchQuery
   } = useProducts();
-  
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState(searchQuery);
   const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
-  
+
   const userMenuRef = useRef(null);
   const categoryMenuRef = useRef(null);
 
@@ -95,9 +95,9 @@ const Header = () => {
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link to="/" className="flex items-center">
-              <img 
-                src="https://statics.olx.in/external/base/img/olxLogo/olx_logo_2025.svg" 
-                alt="OLX Logo" 
+              <img
+                src="https://statics.olx.in/external/base/img/olxLogo/olx_logo_2025.svg"
+                alt="OLX Logo"
                 className="h-8"
               />
             </Link>
@@ -155,23 +155,39 @@ const Header = () => {
               </div>
 
               {/* Search bar */}
-              <form onSubmit={handleSearchSubmit} className="flex-1 min-w-[300px]">
-                <div className="relative">
+              <form onSubmit={handleSearchSubmit} className="flex-1 flex items-center gap-3">
+                {/* Location Search Box */}
+                <div className="relative w-72 flex-shrink-0 group">
+                  <div className={`absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none transition-colors`}>
+                    <Search className="h-5 w-5 text-olx-blue" />
+                  </div>
                   <input
                     type="text"
-                    placeholder="Find Cars, Mobile Phones and more..."
-                    className="w-full py-2 pl-10 pr-4 text-sm text-olx-blue bg-olx-light-grey rounded-md focus:outline-none focus:ring-2 focus:ring-olx-green"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
+                    placeholder="India"
+                    className="w-full py-2.5 pl-10 pr-10 text-olx-blue bg-white border-2 border-olx-blue rounded focus:border-olx-green outline-none transition-all placeholder:text-gray-400"
+                    defaultValue="India"
                   />
-                  <button
-                    type="submit"
-                    className="absolute inset-y-0 right-0 flex items-center px-3 bg-olx-blue text-white rounded-r-md"
-                  >
-                    <Search className="h-4 w-4" />
-                  </button>
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <Search className="h-4 w-4 text-olx-dark-grey" />
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <ChevronDown className="h-6 w-6 text-olx-blue" />
+                  </div>
+                </div>
+
+                {/* Main Product Search Box */}
+                <div className="relative flex-1 group">
+                  <div className="flex w-full">
+                    <input
+                      type="text"
+                      placeholder="Find Cars, Mobile Phones and more..."
+                      className="w-full py-2.5 px-3 text-olx-blue bg-white border-2 border-olx-blue border-r-0 rounded-l focus:border-olx-green outline-none transition-all placeholder:text-gray-400"
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+                    />
+                    <button
+                      type="submit"
+                      className="flex items-center justify-center px-4 bg-olx-blue text-white rounded-r hover:bg-olx-blue/90 transition-colors"
+                    >
+                      <Search className="h-6 w-6 font-bold" />
+                    </button>
                   </div>
                 </div>
               </form>
@@ -179,8 +195,8 @@ const Header = () => {
 
             <div className="flex items-center space-x-4">
               {/* Wishlist */}
-              <Link 
-                to="/wishlist" 
+              <Link
+                to="/wishlist"
                 className="flex items-center px-3 py-2 text-sm font-medium text-olx-blue rounded-md hover:bg-olx-light-grey"
               >
                 <Heart className="h-5 w-5 mr-1" />

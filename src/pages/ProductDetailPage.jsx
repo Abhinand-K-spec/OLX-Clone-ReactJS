@@ -20,14 +20,14 @@ const ProductDetailPage = () => {
         setLoading(true);
         const productData = await getProductById(id);
         setProduct(productData);
-        
+
         if (currentUser) {
           const inWishlist = await checkIfInWishlist(id);
           setIsInWishlist(inWishlist);
         }
       } catch (error) {
         console.error('Error fetching product details:', error);
-        setError('Failed to load product details. The product may have been removed or is unavailable.');
+        setError(error.message || 'Failed to load product details. The product may have been removed or is unavailable.');
       } finally {
         setLoading(false);
       }
@@ -179,11 +179,10 @@ const ProductDetailPage = () => {
                 <div className="flex space-x-2">
                   <button
                     onClick={handleWishlistToggle}
-                    className={`p-2 rounded-full ${
-                      isInWishlist 
-                        ? 'bg-red-500 text-white' 
+                    className={`p-2 rounded-full ${isInWishlist
+                        ? 'bg-red-500 text-white'
                         : 'bg-olx-light-grey text-olx-blue hover:bg-gray-200'
-                    }`}
+                      }`}
                   >
                     <Heart className={`h-5 w-5 ${isInWishlist ? 'fill-current' : ''}`} />
                   </button>

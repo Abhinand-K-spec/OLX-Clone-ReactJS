@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authMode, setAuthMode] = useState('login'); 
+  const [authMode, setAuthMode] = useState('login');
 
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     });
 
-    
+
     return unsubscribe;
   }, []);
 
@@ -39,12 +39,12 @@ export const AuthProvider = ({ children }) => {
     setAuthModalOpen(false);
   };
 
- 
+
   const toggleAuthMode = () => {
     setAuthMode(authMode === 'login' ? 'signup' : 'login');
   };
 
- 
+
   const value = {
     currentUser,
     authModalOpen,
