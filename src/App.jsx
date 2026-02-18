@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ProductProvider } from './context/ProductContext';
@@ -10,13 +10,11 @@ import ProductDetailPage from './pages/ProductDetailPage';
 import WishlistPage from './pages/WishlistPage';
 import MyAdsPage from './pages/myAdsPage';
 import { useProducts } from './context/ProductContext';
-import { useAuth } from './context/AuthContext';
-import { User } from 'lucide-react';
 
 
 // Footer component
 const Footer = () => {
-  const {currentUser , openAuthModal} = useAuth()
+
   return (
 
     <footer className="bg-olx-blue text-white py-8">
@@ -60,7 +58,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400">
-          <p><a className='linkedin' href="https://www.linkedin.com/in/shamveel-p/" target='_blank'>Shamveel P.</a> © 2006-2023 OLX</p>
+          <p><a className='linkedin' href="https://www.linkedin.com/in/shamveel-p/" target='_blank'>Abhinand K.</a> © 2006-2023 OLX</p>
         </div>
       </div>
     </footer>

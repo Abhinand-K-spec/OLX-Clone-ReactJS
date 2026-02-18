@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { auth, getCurrentUser } from '../services/firebase';
+import { auth } from '../services/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
 
 

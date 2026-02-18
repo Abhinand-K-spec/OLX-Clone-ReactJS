@@ -15,7 +15,7 @@ export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [wishlist, setWishlist] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [categories, setCategories] = useState([
+  const [categories] = useState([
     'Electronics', 'Vehicles', 'Property', 'Furniture',
     'Fashion', 'Books & Hobbies', 'Pets', 'Services'
   ]);
