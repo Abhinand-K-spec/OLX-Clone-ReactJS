@@ -180,7 +180,6 @@ const SellForm = ({ onClose }) => {
                   onChange={handleImageChange}
                   accept="image/*"
                   className="hidden"
-                  required
                 />
                 <p className="mt-1 text-xs text-gray-500">
                   Upload an image (max 5MB, required)
@@ -199,7 +198,6 @@ const SellForm = ({ onClose }) => {
                   placeholder="Enter product title"
                   value={formData.name}
                   onChange={handleChange}
-                  required
                   maxLength={70}
                 />
                 <p className="mt-1 text-xs text-gray-500">
@@ -219,7 +217,6 @@ const SellForm = ({ onClose }) => {
                   placeholder="Describe your item (condition, features, etc.)"
                   value={formData.description}
                   onChange={handleChange}
-                  required
                   maxLength={4096}
                 ></textarea>
                 <p className="mt-1 text-xs text-gray-500">
@@ -237,7 +234,6 @@ const SellForm = ({ onClose }) => {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-olx-green focus:border-olx-green"
                   value={formData.category}
                   onChange={handleChange}
-                  required
                 >
                   <option value="">Select category</option>
                   {categories.map((category) => (
@@ -264,7 +260,6 @@ const SellForm = ({ onClose }) => {
                     placeholder="0"
                     value={formData.price}
                     onChange={handleChange}
-                    required
                   />
                 </div>
               </div>

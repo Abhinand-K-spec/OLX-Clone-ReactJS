@@ -12,6 +12,7 @@ import MyAdsPage from './pages/myAdsPage';
 import { useProducts } from './context/ProductContext';
 
 
+
 // Footer component
 const Footer = () => {
 
@@ -58,7 +59,7 @@ const Footer = () => {
           </div>
         </div>
         <div className="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400">
-          <p><a className='linkedin' href="https://www.linkedin.com/in/shamveel-p/" target='_blank'>Abhinand K.</a> © 2006-2023 OLX</p>
+          <p><a className='linkedin' href="https://www.linkedin.com/in/abhinand-k-spec/" target='_blank'>Abhinand K.</a> © 2006-2023 OLX</p>
         </div>
       </div>
     </footer>
