@@ -313,7 +313,6 @@ const AuthModal = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onBlur={handleBlur('email')}
-                  required
                 />
                 {errors.email && touched.email && (
                   <p className="mt-1 text-xs text-red-500 font-medium">{errors.email}</p>
@@ -329,7 +328,6 @@ const AuthModal = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   onBlur={handleBlur('password')}
-                  required
                 />
                 {errors.password && touched.password && (
                   <p className="mt-1 text-xs text-red-500 font-medium">{errors.password}</p>
